@@ -10,11 +10,12 @@ import SwiftUI
 import CoreLocation
 
 
-struct Landmark: Hashable, Codable {
+struct Landmark: Hashable, Codable, Identifiable {
     var id: Int
     var name: String
     var park: String
     var state: String
+    var isFavorite: Bool
     var description: String
     
     private var imageName: String
