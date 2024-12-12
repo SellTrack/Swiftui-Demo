@@ -10,10 +10,14 @@ import SwiftUI
 struct LandmarkList: View {
     @Environment(ModelData.self) var modelData
     @State private var showFavoritesOnly = false
+    @State private var searchText = ""
+
 
     var filteredLandmarks: [Landmark] {
         modelData.landmarks.filter { landmark in
-             (!showFavoritesOnly || landmark.isFavorite)
+            (!showFavoritesOnly || landmark.isFavorite) &&
+            (searchText.isEmpty || landmark.name.lowercased().contains(searchText.lowercased()))
+            
          }
      }
     
@@ -33,8 +37,8 @@ struct LandmarkList: View {
                 }
                         }
             .animation(.default, value: filteredLandmarks)
-
-                        .navigationTitle("Landmarks")
+            .searchable(text: $searchText, prompt: "Search Landmarks")
+            .navigationTitle("Landmarks")
         } detail: {
             Text("Select a Landmark")
         }
