@@ -5,14 +5,26 @@
 //  Created by Selman Orhan on 12.12.2024.
 //
 
-import SwiftUI
+import Foundation
 
-struct Profile: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+
+struct Profile {
+    var username: String
+    var prefersNotifications = true
+    var seasonalPhoto = Season.winter
+    var goalDate = Date()
+
+
+    static let `default` = Profile(username: "g_kumar")
+
+
+    enum Season: String, CaseIterable, Identifiable {
+        case spring = "🌷"
+        case summer = "🌞"
+        case autumn = "🍂"
+        case winter = "☃️"
+
+
+        var id: String { rawValue }
     }
-}
-
-#Preview {
-    Profile()
 }
