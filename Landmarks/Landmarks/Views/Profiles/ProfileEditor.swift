@@ -11,14 +11,56 @@ import SwiftUI
 struct ProfileEditor: View {
     @Binding var profile: Profile
     @State private var age = 20.0
+    @State private var sayi = 1
+
     @State private var isEditing = false
     @State private var animationStep = 0
     @State private var current = 67.0
     @State private var minValue = 0.0
     @State private var maxValue = 170.0
+    @State private var isShowingPopover = false
+    @State private var isBlue = true
+    @State private var selected = "Elma"
+    let fruits = [
+        "Elma", "Armut", "Muz", "Çilek", "Kiraz", "Karpuz", "Kavun", "Portakal",
+        "Mandalina", "Üzüm", "Şeftali", "Kayısı", "Erik", "Nar", "Ananas",
+        "Hindistan Cevizi", "Kivi", "Limon", "Avokado", "Mango", "Papaya",
+        "Passion Fruit", "Yaban Mersini", "Ahududu", "Böğürtlen", "Karadut",
+        "Trabzon Hurması", "Greyfurt", "Ayva", "Kızılcık", "Aronya",
+        "Goji Berry", "Liçi", "Rambutan", "Durian", "Tamarind", "Jackfruit"
+    ]
 
 
-    
+
+    struct FileItem: Hashable, Identifiable, CustomStringConvertible {
+        var id: Self { self }
+        var name: String
+        var children: [FileItem]? = nil
+        var description: String {
+            switch children {
+            case nil:
+                return "📄 \(name)"
+            case .some(let children):
+                return children.isEmpty ? "📂 \(name)" : "📁 \(name)"
+            }
+        }
+    }
+
+    let data =
+      FileItem(name: "users", children:
+        [FileItem(name: "user1234", children:
+          [FileItem(name: "Photos", children:
+            [FileItem(name: "photo001.jpg"),
+             FileItem(name: "photo002.jpg")]),
+           FileItem(name: "Movies", children:
+             [FileItem(name: "movie001.mp4")]),
+              FileItem(name: "Documents", children: [])
+          ]),
+         FileItem(name: "newuser", children:
+           [FileItem(name: "Documents", children: [])
+           ])
+        ])
+
     var dateRange: ClosedRange<Date> {
         let min = Calendar.current.date(byAdding: .year, value: -1, to: profile.goalDate)!
         let max = Calendar.current.date(byAdding: .year, value: 1, to: profile.goalDate)!
@@ -38,8 +80,35 @@ struct ProfileEditor: View {
 
     var body: some View {
         
+        
 
         List {
+            
+            Picker("Meyve Seç", selection: $selected) {
+                        ForEach(fruits, id: \.self) {
+                            Text($0)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+            
+            Text("Sayı: \(sayi)")
+            .font(.largeTitle)
+            .foregroundColor(isBlue ? .blue : .red)
+            .transition(.moveAndFade)
+            Button("Arttır"){
+                sayi += 1
+                isBlue.toggle()
+            }
+            .textCase(.uppercase)
+
+            
+            OutlineGroup(data, children: \.children) { item in
+                Text("\(item.description)")
+            }
+            
+            NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {
+                
+            }
             HStack {
                 Text("Username")
                 Spacer()
@@ -142,7 +211,29 @@ struct ProfileEditor: View {
                         }
                   }
               }
+            Text("Rotation by passing an angle in degrees")
+                .frame(height: 120.0)
+                .rotation3DEffect(
+                    .degrees(45),
+                    axis: (x: 0.2, y: 0.2, z: -0.1),
+                    anchor: .center,
+                    anchorZ: 4,
+                    perspective: 4)
+                .border(Color(hue: 1.0, saturation: 0.031, brightness: 0.989))
             
+            Button("Show Popover") {
+                       self.isShowingPopover = true
+                   }
+                   .popover(
+                       isPresented: $isShowingPopover, arrowEdge: .bottom
+                   ) {
+                       Text("Popover Content")
+                           .padding()
+                   }
+                   .safeAreaInset(edge: /*@START_MENU_TOKEN@*/.bottom/*@END_MENU_TOKEN@*/) {
+                        /*@START_MENU_TOKEN@*/Text("Bottom Safe Area Inset")/*@END_MENU_TOKEN@*/
+                   }
+
         }
     }
 }
