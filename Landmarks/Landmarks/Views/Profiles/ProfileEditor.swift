@@ -12,6 +12,10 @@ struct ProfileEditor: View {
     @Binding var profile: Profile
     @State private var age = 20.0
     @State private var isEditing = false
+    @State private var animationStep = 0
+    @State private var current = 67.0
+    @State private var minValue = 0.0
+    @State private var maxValue = 170.0
 
 
     
@@ -21,7 +25,20 @@ struct ProfileEditor: View {
         return min...max
     }
     
+    enum AnimationPhase: CaseIterable {
+        case start, middle, end
+    }
+    
+    struct ToggleStates {
+        var oneIsOn: Bool = false
+        var twoIsOn: Bool = true
+    }
+    @State private var toggleStates = ToggleStates()
+    @State private var topExpanded: Bool = true
+
     var body: some View {
+        
+
         List {
             HStack {
                 Text("Username")
@@ -58,12 +75,74 @@ struct ProfileEditor: View {
             Gauge(value: age, in: 0...100) {
                 Text("Age in Gauge")
             }
+            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+            .animation(.ripple(index: Int(age)))
             ProgressView(value: age/100){
                 Text("Age in Progress Bar")
             }
+            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+            .blur(radius: age/10 )
+
             Stepper(value: $age, in: 0...100) {
                 Text("Age in Stepper")
             }
+            .shadow(color: .black, radius: age/10)
+            .phaseAnimator(AnimationPhase.allCases, trigger: animationStep) { content, phase in
+                        content
+                            .blur(radius: phase == .start ? 0 : 10)
+                            .scaleEffect(phase == .middle ? 3 : 1)
+                    }
+
+            
+            DisclosureGroup("Items", isExpanded: $topExpanded) {
+                  Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                  Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                  DisclosureGroup("Sub-items") {
+                      Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                      Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                      DisclosureGroup("Sub-items") {
+                          Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                          Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                          DisclosureGroup("Sub-items") {
+                              Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                              Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                              DisclosureGroup("Sub-items") {
+                                  Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                  Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                  DisclosureGroup("Sub-items") {
+                                      Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                      Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                      DisclosureGroup("Sub-items") {
+                                          Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                          Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                          DisclosureGroup("Sub-items") {
+                                              Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                              Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                              DisclosureGroup("Sub-items") {
+                                                  Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                                  Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                                  DisclosureGroup("Sub-items") {
+                                                      Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                                      Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                                      DisclosureGroup("Sub-items") {
+                                                          Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                                          Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                                          DisclosureGroup("Sub-items") {
+                                                              Toggle("Toggle 1", isOn: $toggleStates.oneIsOn)
+                                                              Toggle("Toggle 2", isOn: $toggleStates.twoIsOn)
+                                                              }
+                                                          }
+                                                      }
+                                                  }
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                        }
+                  }
+              }
+            
         }
     }
 }
